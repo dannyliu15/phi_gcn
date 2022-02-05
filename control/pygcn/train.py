@@ -13,7 +13,7 @@ from pygcn.utils import normalize,sparse_mx_to_torch_sparse_tensor
 import scipy.sparse as sp
 
 
-def update_graph(model, optimizer, features, adj, rew_states, loss, args,envs):
+def update_graph(model, optimizer, features, adj, rew_states, loss, args, envs, device):
     if adj.shape[0] >1:
         labels = torch.zeros((len(features)))
         idx_train = torch.LongTensor([0])
@@ -36,13 +36,11 @@ def update_graph(model, optimizer, features, adj, rew_states, loss, args,envs):
     adj = sparse_mx_to_torch_sparse_tensor(adj)
 
 
-    if args.cuda and torch.cuda.is_available():
-        model.cuda()
-        features = features.cuda()
-        adj = adj.cuda()
-        laplacian =laplacian.cuda()
-        labels = labels.cuda()
-        idx_train = idx_train.cuda()
+    features = features.to(device)
+    adj = adj.to(device)
+    laplacian =laplacian.to(device)
+    labels = labels.to(device)
+    idx_train = idx_train.to(device)
 
     t_total = time.time()
     for epoch in range(args.gcn_epochs):

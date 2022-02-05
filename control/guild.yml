@@ -1,0 +1,10 @@
+main_lightGCN:
+    description: GCN for RL
+    main: main_lightGCN
+    flags-import: all
+    sourcecode:
+        - include:
+            dir: algo
+        - exclude:
+            dir: pygcn/data
+

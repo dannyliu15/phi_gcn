@@ -1,5 +1,4 @@
 import math
-
 import torch
 
 from torch.nn.parameter import Parameter
@@ -29,14 +28,31 @@ class GraphConvolution(Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, input, adj):
-        # support = torch.mm(input, self.weight)
-        output = torch.spmm(adj, input)
-        # if self.bias is not None:
-        #     return output + self.bias
-        # else:
-        return output
+        support = torch.mm(input, self.weight)
+        output = torch.spmm(adj, support)
+        if self.bias is not None:
+            return output + self.bias
+        else:
+            return output
 
     def __repr__(self):
         return self.__class__.__name__ + ' (' \
                + str(self.in_features) + ' -> ' \
                + str(self.out_features) + ')'
+
+
+class GraphConvolution_lightGCN(Module):
+    """
+    Light GCN layer
+    """
+    def __init__(self):
+        super(GraphConvolution_lightGCN, self).__init__()
+
+    def forward(self, input, adj):
+        return torch.spmm(adj, input)
+
+    def __repr__(self):
+        return self.__class__.__name__ + ' (' \
+               + str(self.in_features) + ' -> ' \
+               + str(self.out_features) + ')'
+

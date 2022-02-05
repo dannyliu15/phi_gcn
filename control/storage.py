@@ -57,16 +57,16 @@ class RolloutStorage(object):
         self.recurrent_hidden_states[0].copy_(self.recurrent_hidden_states[-1])
         self.masks[0].copy_(self.masks[-1])
 
-    def compute_returns(self, next_value, use_gae, gamma, tau, gcn , alpha):
+    def compute_returns(self, next_value, use_gae, gamma, tau, gcn , alpha, device):
 
         total_len = self.hidden_states.size(0) * self.hidden_states.size(1)
         adj = torch.eye(total_len)
         self.adv =torch.zeros(self.num_steps + 1, self.num_processes, 1)
         self.adv_comb =torch.zeros(self.num_steps + 1, self.num_processes, 1)
-        if self.hidden_states.is_cuda:
-            adj=adj.cuda()        
-            self.adv = self.adv.cuda()
-            self.adv_comb = self.adv_comb.cuda()
+        
+        adj=adj.to(device)        
+        self.adv = self.adv.to(device)
+        self.adv_comb = self.adv_comb.to(device)
 
 
         gcn_phi = torch.exp(gcn(self.hidden_states.reshape(total_len, self.hidden_states.size(2) ), adj))
